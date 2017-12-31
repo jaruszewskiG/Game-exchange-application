@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pierwszy komponent w React.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.min.js"></script>
+  <script src="https://unpkg.com/babel-standalone/babel.js"></script>
+  <script src="JSONs/myGames.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="text/babel">
+
+    var Parent = React.createClass({
+
+      getInitialState() {
+        return {
+            active: 'FIRST'
+        };
+      },
+
+      welcomePageClick() {
+          this.setState({
+              active: 'FIRST'
+          });
+      },
+
+      gamesListClick() {
+          this.setState({
+              active: 'SECOND'
+          });
+      },
+
+      gamesSearchedClick() {
+          this.setState({
+              active: 'THIRD'
+          });
+      },
+
+      render() {
+
+          var active = this.state.active;
+
+          return (
+              <div>
+                <header className="ui fixed menu">
+                  <nav className="ui container">
+                    <button onClick={this.welcomePageClick} className="header item">
+                      Strona główna
+                    </button>
+                    <button onClick={this.gamesListClick} className="header item">
+                      Lista moich gier
+                    </button>
+                    <button onClick={this.gamesSearchedClick} className="header item">
+                      Lista poszukiwanych przeze mnie gier
+                    </button>
+                  </nav>
+                </header>
+                  {active === 'FIRST' ? (
+                      <WelcomePage />
+                  ) : active === 'SECOND' ? (
+                      <MyGamesListPage />
+                  ) : active === 'THIRD' ? (
+                      <MySearchedGamesListPage />
+                  ) : null}
+              </div>
+          );
+
+      }
+
+    });
+
+    // Komponent GamesList powinien być reużywalny, ale nie mam na razie JSONa, więc jest na sztywno
+
+    function GamesList() {
+      return (
+        <ul className="ui relaxed divided list selection">
+          <GameItem
+            name="Path of Exile"
+            decriptionShort="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            imgUrl = "https://rocketdock.com/images/screenshots/pathofexile.png"
+          />
+          <GameItem
+            name="Dark Souls"
+            decriptionShort="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            imgUrl = "https://orig00.deviantart.net/d216/f/2016/006/1/2/dark_souls___prepare_to_die_edition_icon_by_andonovmarko-d9n17qn.png"
+          />
+          <GameItem
+            name="Grand Theft Auto V"
+            decriptionShort="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            imgUrl = "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/apps/271590/9e213490c40bc36bff8264f4f4684b2e28d2447c.ico"
+          />
+        </ul>
+      );
+    }
+
+    function SearchedGamesList() {
+      return (
+        <ul className="ui relaxed divided list selection">
+          <GameItem
+            name="Minecraft"
+            decriptionShort="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+            imgUrl = "https://img00.deviantart.net/9cc9/i/2011/008/6/1/minecraft_hd_icon___mac___pc_by_hunterkharon-d36qrs5.png"
+          />
+          <GameItem
+            name="Counter Strike : Global Offensive"
+            decriptionShort="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            imgUrl = "https://www.challengermode.com/Content/img/games/csgo/game_icon.svg"
+          />
+          <GameItem
+            name="League of Legends"
+            decriptionShort="Lorem ipsum dolor sit amet, consectetur adipiscing elit"
+            imgUrl = "https://vignette.wikia.nocookie.net/leagueoflegends/images/1/12/League_of_Legends_Icon.png/revision/latest?cb=20150402234343"
+          />
+        </ul>
+      );
+    }
+
+    function GameItem({ name, decriptionShort, imgUrl }) {
+      return (
+        <li className="item">
+          <img src={ imgUrl } className="ui mini rounded image" />
+          <div className="content">
+            <h4 className="header">{ name }</h4>
+            <div className="description">{ decriptionShort }</div>
+          </div>
+        </li>
+      );
+    }
+
+    // Strona powitalna
+    function WelcomePage() {
+      return (
+        <div>
+          <main className="ui main text container welcome-title">
+            witaj na aplikacji do wymiany gier!
+          </main>
+        </div>
+      );
+    }
+
+    // Lista moich gier
+    function MyGamesListPage() {
+      return (
+        <div>
+          <main className="ui main text container">
+            <GamesList />
+          </main>
+        </div>
+      );
+    }
+
+    // Lista poszukiwanych przeze mnie gier
+    function MySearchedGamesListPage() {
+      return (
+        <div>
+          <main className="ui main text container">
+            <SearchedGamesList />
+          </main>
+        </div>
+      );
+    }
+
+
+
+    ReactDOM.render(
+      <Parent />,
+      document.getElementById('app')
+    );
+  </script>
+</body>
+
+</html>
