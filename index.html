@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pierwszy komponent w React.js</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.4.2/react-dom.js"></script>
+  <script src="https://unpkg.com/babel-standalone/babel.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="JSONs/myGames.js"></script>
+  <script src="JSONs/mySearchedGames.js"></script>
+  <script src="JSONs/someUserGames.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="styles/style.css">
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="text/babel">
+
+    let Parent = React.createClass({
+      getInitialState() {
+        return {
+            active: '1'
+        };
+      },
+
+      welcomePageClick() {
+        this.setState({
+            active: '1'
+        });
+      },
+
+      gamesListClick() {
+        this.setState({
+            active: '2'
+        });
+      },
+
+      gamesSearchedClick() {
+        this.setState({
+            active: '3'
+        });
+      },
+
+      gamesSomeUserClick() {
+        this.setState({
+            active: '4'
+        });
+      },
+
+      render() {
+        let active = this.state.active;
+
+        return (
+          <div>
+            <header className="ui fixed menu">
+              <nav className="ui container">
+                <button onClick={ this.welcomePageClick } className="header item">
+                  Strona główna
+                </button>
+                <button onClick={ this.gamesListClick } className="header item">
+                  Lista moich gier
+                </button>
+                <button onClick={ this.gamesSearchedClick } className="header item">
+                  Lista poszukiwanych przeze mnie gier
+                </button>
+                <button onClick={ this.gamesSomeUserClick } className="header item">
+                  Lista gier innego użytkownika
+                </button>
+              </nav>
+            </header>
+            {active === '1' ? (
+                <WelcomePage />
+            ) : active === '2' ? (
+                <MyGamesListPage />
+            ) : active === '3' ? (
+                <MySearchedGamesListPage />
+            ) : active === '4' ? (
+                <SomeUserGamesListPage />
+            ) : null}
+          </div>
+        );
+      }
+    });
+
+    // Komponent listy gier
+    function GamesList({ gamesJSON }) {
+      let buffer = [];
+      
+      for (let i = 0; i < gamesJSON.length; i++) {
+        let obj = gamesJSON[i];
+        buffer.push(
+          <GameItem
+            key = { i }
+            name = { obj.name }
+            platform = { obj.platform }
+            genre = { obj.genre }
+            rating = { obj.rating }
+            descriptionShort = { obj.descriptionShort }
+            description = { obj.description }
+            imgUrl = { obj.link }
+          />
+        );
+      }
+      return (
+        <ul className="ui relaxed divided list selection">
+          { buffer }
+        </ul>
+      );
+    }
+
+    // Komponent gry
+    let GameItem = React.createClass({
+      getInitialState() {
+        return {
+            active: false
+        };
+      },
+
+      gameItemClick() {
+        this.setState({ active: !this.state.active});
+      },
+
+      render() {
+        const { name, platform, genre, rating, descriptionShort, description, imgUrl } = this.props; 
+        let active = this.state.active;
+
+        return (
+          <li className="item" onClick={ this.gameItemClick }>
+            <img src={ imgUrl } className="ui mini rounded image" />
+            {active === false ? (
+                <div className="content">
+                  <h4 className="header">{ name }</h4>
+                  <h3 className="item__rating">{ rating }</h3>
+                  <div className="item__description">{ descriptionShort }</div>
+                </div>
+            ) : active === true ? (
+                <div className="content">
+                  <h4 className="header item__name">{ name }</h4>
+                  <h3 className="item__rating">{ rating }</h3>
+                  <h4 className="item__platform">Platforma: { platform }</h4>
+                  <div className="item__description">{ description }</div>
+                </div>
+            ) : null}
+          </li>
+        );
+      }
+    });
+    
+/*
+    function GameItem({ name, descriptionShort, imgUrl }) {
+      return (
+        <li className="item">
+          <img src={ imgUrl } className="ui mini rounded image" />
+          <div className="content">
+            <h4 className="header">{ name }</h4>
+            <div className="description">{ descriptionShort }</div>
+          </div>
+        </li>
+      );
+    }
+*/
+
+    // Strona powitalna
+    function WelcomePage() {
+      return (
+        <main className="ui main text container welcome-title">
+          <div className="appName">
+            Wymień swoje gry!
+          </div>
+        </main>
+      );
+    }
+
+    // Lista moich gier
+    function MyGamesListPage() {
+      return (
+        <main className="ui main text container">
+          <GamesList gamesJSON = { myGamesJSON }/>
+        </main>
+      );
+    }
+
+    // Lista poszukiwanych przeze mnie gier
+    function MySearchedGamesListPage() {
+      return (
+        <main className="ui main text container">
+          <GamesList gamesJSON = { mySearchedGamesJSON }/>
+        </main>
+      );
+    }
+
+    // Lista gier innego użytkownika
+    function SomeUserGamesListPage() {
+      return (
+        <main className="ui main text container">
+          <GamesList gamesJSON = { someUserGamesJSON }/>
+        </main>
+      );
+    }
+
+
+    ReactDOM.render(
+      <Parent />,
+      document.getElementById('app')
+    );
+  </script>
+</body>
+
+</html>
